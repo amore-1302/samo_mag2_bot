@@ -1,9 +1,42 @@
 import sqlite3
 
+# По конкртному ресторано и категории возвращаем все блюда
+# каждая строка id блюда и название блюда
+def get_dishs_for_categorys_and_restorany( rest_id , category_id):
+    if category_id > 0:
+        param = (rest_id, category_id,)
+        query = """SELECT 
+        t1.dish_id, t1.name, t1.price, t2.name 
+        FROM dishs t1
+        INNER JOIN categorys t2 ON t1.category_id = t2.category_id 
+        WHERE t1.restaurant_id = ?
+        AND t1.category_id = ?
+        ORDER BY t1.dish_id
+        """
+    else:
+        param = (rest_id, )
+        query = """SELECT 
+        t1.dish_id, t1.name, t1.price, t2.name  
+        FROM dishs t1
+        INNER JOIN categorys t2 ON t1.category_id = t2.category_id 
+        WHERE t1.restaurant_id = ?
+        ORDER BY t2.sort, t1.dish_id
+        """
+
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+
+    cursor.execute(query, param)
+    rows = cursor.fetchall()  # Получаем все данные
+    conn.close()
+    return rows
+
+
+
 # По конкртному ресторано возвращаем все категории. каждая строка id категории и название ее
 def get_categorys_for_restorany( rest_id ):
     param = (rest_id,)
-    conn = sqlite3.connect('../samo_mag_bot.db')
+    conn = sqlite3.connect('./samo_mag_bot.db')
     cursor = conn.cursor()
     query = """SELECT DISTINCT  t2.category_id, t2.name FROM dishs t1
         INNER JOIN categorys t2 ON t1.category_id = t2.category_id 
