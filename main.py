@@ -17,7 +17,7 @@ def  sql_list_command(message):
 
 
 # основной бот
-TOKEN = 'Ваш токен'
+TOKEN = '6708953536:AAHOykPXIJK2ZaIGB7rHGh5Pt0CchHE-bH0' # @zelenograd_food_bot
 
 
 
@@ -32,8 +32,10 @@ _restaurants = {}
 _restaurant_about_menu = []
 _restaurant_category_menu = {}
 _restaurant_dishes_menu = []
-_restaurant_details = [ "Меню", "Галерея", "Рейтинг", "Отзывы", "Добавить отзыв"]
+_restaurant_details = ["Меню", "Галерея", "Рейтинг ресторана", "Оценить ресторан", "Отзывы", "Добавить отзыв"]
 
+# Рейтинги
+_rating=""
 
 # Очередь заказов и время ожидания
 _orders_queue = []
@@ -139,14 +141,24 @@ def handle_restaurant(message):
 
 @bot.message_handler(func=lambda message: message.text in _restaurant_about_menu)
 def handle_restaurant_info(message):
+    global _rating
     comma_index = message.text.find('.')
     info = "Невозможно предоставить информацию"
     if comma_index != -1:  # Если точка найдена
         info = message.text[comma_index+2:]
     if info == "Отзывы":
         bot.send_message(message.chat.id, "Выводим 5 популярных отзыва")
-    elif info == "Рейтинг":
+    elif info == "Рейтинг ресторана":
         bot.send_message(message.chat.id, "Выводим рейтинг ресторана")
+    elif info == "Оценить ресторан":
+        _rating = "restaurant"
+        markup = types.InlineKeyboardMarkup(row_width=5)
+        # Создаем кнопки для оценок от 1 до 5
+        buttons = [types.InlineKeyboardButton(text=str(i), callback_data=str(i)) for i in range(1, 6)]
+        but_0 = types.InlineKeyboardButton(text="Убрать оценку", callback_data="Убрать оценку")
+        buttons.append(but_0)
+        markup.add(*buttons)
+        bot.send_message(message.chat.id, "Оцените ресторан от 1 до 5:", reply_markup=markup)
     elif info == "Галерея":
         bot.send_message(message.chat.id, "Выводим галерею ресторана")
     elif info == "Меню":
@@ -156,7 +168,21 @@ def handle_restaurant_info(message):
         markup = category_menu_markup(markup)
         bot.send_message(message.chat.id, f"Выберете категорию блюд {_choose_restaurant}:", reply_markup=markup)
 
+#*****************************************************************************
+# Рейтинги
+#*****************************************************************************
+@bot.callback_query_handler(func=lambda call: True)
+def handle_rating(call):
+    global _rating
+    if not call.data.isdigit():
+        bot.answer_callback_query(call.id, f"Оценка отменена")
+        return
 
+    if _rating == "restaurant":
+        bot.answer_callback_query(call.id, f"Спасибо за вашу оценку ресторана: {call.data}")
+    elif _rating == "dish":
+        bot.answer_callback_query(call.id, f"Спасибо за вашу оценку блюда: {call.data}")
+    _rating = ""
 #*****************************************************************************
 # Заказы
 #*****************************************************************************
