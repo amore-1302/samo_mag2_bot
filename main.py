@@ -17,8 +17,8 @@ def  sql_list_command(message):
 
 
 # основной бот
-TOKEN = '7093861093:AAH5k8q2J-fITlb7lfSOv3hlYFtwLCG1CsM'
-# TOKEN = '6708953536:AAHOykPXIJK2ZaIGB7rHGh5Pt0CchHE-bH0' # @zelenograd_food_bot
+TOKEN = 'Ваш токен'
+
 bot = telebot.TeleBot(TOKEN)
 
 # необходимо объединить в класс и хранить объект класса для каждого пользователя
@@ -72,7 +72,7 @@ def list_message(message):
 
 # *****************************************************************************
 # Блюда
-# *****************************************************************************
+#  *****************************************************************************
 def category_menu_markup(markup):
     id_rest = _restaurants[_choose_restaurant]
     rows = bot_sql.get_categorys_for_restorany(id_rest)
@@ -170,7 +170,7 @@ def handle_orders(message):
     else:
         bot.send_message(message.chat.id, "У вас нет заказа.", reply_markup=markup)
 #*****************************************************************************
-# Настройка
+#  Настройка
 #*****************************************************************************
 @bot.message_handler(func=lambda message: message.text == 'Настройки')
 def handle_settings(message):
