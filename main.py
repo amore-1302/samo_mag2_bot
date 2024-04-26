@@ -20,6 +20,7 @@ def  sql_list_command(message):
 TOKEN = 'TOKEN'
 
 
+
 bot = telebot.TeleBot(TOKEN)
 
 # необходимо объединить в класс и хранить объект класса для каждого пользователя
@@ -81,8 +82,8 @@ def category_menu_markup(markup):
     rows = bot_sql.get_categorys_for_restorany(id_rest)
     _restaurant_category_menu.clear()
     for text in rows:
-         markup.add(types.KeyboardButton(text[1]))
-         _restaurant_category_menu[text[1]] = text[0]
+        markup.add(types.KeyboardButton(text[1]))
+        _restaurant_category_menu[text[1]] = text[0]
     return markup
 
 @bot.message_handler(func=lambda message: message.text == 'Категории блюд ресторана')
@@ -116,7 +117,14 @@ def handle_restaurants(message):
     else:
         _restaurants.clear()
         for restaurant in restaurants:
-            item_btn = types.KeyboardButton(restaurant[1])
+            name_rest = restaurant[1]
+            #if restaurant[3]:
+            #    name_rest =
+
+            item_btn = types.KeyboardButton(name_rest)
+            print("rest")
+            print(restaurant[1])
+            print(restaurant)
             markup.add(item_btn)
             _restaurants[restaurant[1]] = restaurant[0]
         bot.send_message(message.chat.id, "Выберите ресторан:", reply_markup=markup)
@@ -179,6 +187,11 @@ def handle_rating(call):
 
     if _rating == "restaurant":
         bot.answer_callback_query(call.id, f"Спасибо за вашу оценку ресторана: {call.data}")
+        id_telega = call.from_user.id
+        sq_user_id = bot_sql.get_from_telega_user_id_id_user(id_telega)
+        val0 = int(call.data)
+        #Временно поставил ресторан 1
+        bot_sql.change_rating_rest(1, sq_user_id, val0 )
     elif _rating == "dish":
         bot.answer_callback_query(call.id, f"Спасибо за вашу оценку блюда: {call.data}")
     _rating = ""

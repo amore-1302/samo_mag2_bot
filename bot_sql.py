@@ -48,7 +48,7 @@ def change_rating_rest(id_rest, id_user, new_rating):
         cursor.execute(query, param)
         rows = cursor.fetchall()  # Получаем все данные
         conn.close()
-        print(rows)
+
         if len(rows) > 0:
             param = (new_rating, id_rest, id_user,)
             query = """UPDATE rating_rest set rating = ? 
@@ -63,8 +63,7 @@ def change_rating_rest(id_rest, id_user, new_rating):
             conn.close()
         else:
             param = (id_user, id_rest, new_rating,)
-            print("param insert")
-            print(param)
+
             query = 'INSERT INTO rating_rest(user_id, restaurant_id, rating )  VALUES(?, ?, ?)'
 
             conn = sqlite3.connect('./samo_mag_bot.db')
@@ -169,6 +168,16 @@ def get_id_user( user_struct ):
     user = cursor.fetchone()
     conn.close()
     return user[0]
+
+def get_from_telega_user_id_id_user( telega_user_id ):
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT user_id FROM users WHERE telega_id=?', (telega_user_id,))
+    user = cursor.fetchone()
+    conn.close()
+    return user[0]
+
 
 def sql_list_rest():
     conn = sqlite3.connect('./samo_mag_bot.db')
