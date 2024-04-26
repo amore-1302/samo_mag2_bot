@@ -21,6 +21,7 @@ TOKEN = 'TOKEN'
 
 
 
+
 bot = telebot.TeleBot(TOKEN)
 
 # необходимо объединить в класс и хранить объект класса для каждого пользователя
@@ -118,13 +119,12 @@ def handle_restaurants(message):
         _restaurants.clear()
         for restaurant in restaurants:
             name_rest = restaurant[1]
-            #if restaurant[3]:
-            #    name_rest =
+            #            if restaurant[3]:
+            #    val_0 = int(restaurant[3])
+            #    if val_0 > 0:
+            #        name_rest = f"{name_rest}    ({val_0})"
 
             item_btn = types.KeyboardButton(name_rest)
-            print("rest")
-            print(restaurant[1])
-            print(restaurant)
             markup.add(item_btn)
             _restaurants[restaurant[1]] = restaurant[0]
         bot.send_message(message.chat.id, "Выберите ресторан:", reply_markup=markup)
@@ -190,6 +190,8 @@ def handle_rating(call):
         id_telega = call.from_user.id
         sq_user_id = bot_sql.get_from_telega_user_id_id_user(id_telega)
         val0 = int(call.data)
+        #print(_restaurants)
+
         #Временно поставил ресторан 1
         bot_sql.change_rating_rest(1, sq_user_id, val0 )
     elif _rating == "dish":
