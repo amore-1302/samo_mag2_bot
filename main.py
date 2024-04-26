@@ -19,6 +19,8 @@ def  sql_list_command(message):
 # основной бот
 TOKEN = 'Ваш токен'
 
+
+
 bot = telebot.TeleBot(TOKEN)
 
 # необходимо объединить в класс и хранить объект класса для каждого пользователя
@@ -30,7 +32,7 @@ _restaurants = {}
 _restaurant_about_menu = []
 _restaurant_category_menu = {}
 _restaurant_dishes_menu = []
-_restaurant_details = { "Меню", "Галерея", "Рейтинг", "Отзывы", "Добавить отзыв"}
+_restaurant_details = [ "Меню", "Галерея", "Рейтинг", "Отзывы", "Добавить отзыв"]
 
 
 # Очередь заказов и время ожидания
