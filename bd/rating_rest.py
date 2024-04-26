@@ -23,8 +23,9 @@ conn = sqlite3.connect('../samo_mag_bot.db')
 cursor = conn.cursor()
 
 # Создаем  таблицу, если она еще не существует
+
 cursor.execute('''
-CREATE TABLE  IF NOT EXISTS  rating_rest (
+CREATE TABLE  IF NOT EXISTS     rating_rest (
     user_id INTEGER NOT NULL,
     restaurant_id INTEGER NOT NULL,
     rating INTEGER NOT NULL,
@@ -36,3 +37,4 @@ CREATE TABLE  IF NOT EXISTS  rating_rest (
 # Сохраняем изменения в базе данных и закрываем соединение
 conn.commit()
 conn.close()
+

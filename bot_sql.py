@@ -2,6 +2,37 @@ import sqlite3
 
 # По конкртному ресторано и категории возвращаем все блюда
 # каждая строка id блюда и название блюда
+
+def all_rating_rest(id_rest):
+    param = (id_rest,)
+    query = """SELECT  AVG(rating)
+        FROM rating_rest
+        WHERE restaurant_id = ?
+        """
+
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+
+    cursor.execute(query, param)
+    rows = cursor.fetchone()  # Получаем все данные
+    conn.close()
+    if len(rows) <= 0:
+        new_rating = 0
+    else:
+        new_rating_0 = rows[0]
+        new_rating = round(new_rating_0, 2)
+
+    param = (new_rating, id_rest,)
+    query = """UPDATE restaurants set raiting = ? 
+            WHERE restaurant_id = ?
+            """
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+    cursor.execute(query, param)
+    conn.commit()
+    conn.close()
+    return new_rating
+
 def change_rating_rest(id_rest, id_user, new_rating):
     if new_rating > 0:
         param = (id_rest, id_user,)
@@ -31,12 +62,13 @@ def change_rating_rest(id_rest, id_user, new_rating):
             conn.commit()
             conn.close()
         else:
-            param = (new_rating, id_rest, id_user,)
-            query = """INSERT rating_rest(rating, restaurant_id,user_id )  values(?, ?, ?,) 
-            """
+            param = (id_user, id_rest, new_rating,)
+            print("param insert")
+            print(param)
+            query = 'INSERT INTO rating_rest(user_id, restaurant_id, rating )  VALUES(?, ?, ?)'
+
             conn = sqlite3.connect('./samo_mag_bot.db')
             cursor = conn.cursor()
-
             cursor.execute(query, param)
             conn.commit()
             conn.close()
@@ -52,6 +84,10 @@ def change_rating_rest(id_rest, id_user, new_rating):
         cursor.execute(query, param)
         conn.commit()
         conn.close()
+
+
+    # расчитываем общий рейтинг ресторана
+    return all_rating_rest(id_rest)
 
 
 
