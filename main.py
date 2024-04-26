@@ -17,8 +17,7 @@ def  sql_list_command(message):
 
 
 # основной бот
-TOKEN = '6708953536:AAHOykPXIJK2ZaIGB7rHGh5Pt0CchHE-bH0' # @zelenograd_food_bot
-
+TOKEN = 'TOKEN'
 
 
 bot = telebot.TeleBot(TOKEN)
