@@ -1,6 +1,11 @@
 import bot_sql
 import sqlite3
 
+class Curent:
+    def __init__(self):
+        self.id = -1
+
+
 def sel_rest():
     conn = sqlite3.connect('./samo_mag_bot.db')
     cursor = conn.cursor()
@@ -23,6 +28,16 @@ def sel_rating_rest():
         print(row)
 
 
+
+curent_rest = Curent()
+print("curent_rest")
+print(curent_rest.id)
+curent_rest.id = 100
+print(curent_rest.id)
+curent_rest.id = -1
+print(curent_rest.id)
+
+a = 100/0
 str_1 = """
 1 распечатать restaurants   rating_rest
 2 добавить рейтинг  добавляем в таблицу rating_rest строку  10,1,5

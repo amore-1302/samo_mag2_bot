@@ -274,3 +274,14 @@ def sql_list_rest():
     conn.close()
     return rows
 
+
+def sql_get_one_rest(id_rest):
+    nabor = ( id_rest, )
+    query = "SELECT * FROM restaurants WHERE restaurant_id = ?"
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+    cursor.execute(query, nabor )
+    rows = cursor.fetchone()  # Получаем все данные
+    conn.close()
+    return rows
+

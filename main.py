@@ -2,8 +2,33 @@
 import telebot
 from telebot import types
 import bot_sql
+import os
 
-def  sql_list_command(message):
+class Curent:
+    def __init__(self):
+        self.id = -1
+
+def show_foto(name_folder, id_rest, message_chat_id):
+
+    # Путь к папке с изображениями
+    folder_path = f'./static/{name_folder}/{id_rest}/'
+    print(folder_path)
+    if os.path.exists(folder_path):
+        # Просмотр файлов с 1 по 10 и отправка их в Telegram, *если они существуют*
+        #print("выводим файлы")
+        for i in range(1, 11):
+            image_path = os.path.join(folder_path, f"{i}.jpg")
+            if os.path.exists(image_path):
+                #print(image_path)
+                with open(image_path, 'rb') as photo:
+                    bot.send_photo(chat_id=message_chat_id, photo=photo)
+    else:
+        bot.send_message(message_chat_id, "Галерея  ресторана не обнаружена")
+
+
+
+
+def sql_list_command(message):
     rows = bot_sql.sql_list_rest()
     curent_pos = 0
     res_str = 'Список ресторанов :\n'
@@ -19,6 +44,8 @@ def  sql_list_command(message):
 # основной бот
 TOKEN = 'TOKEN'
 
+
+curent_rest = Curent()
 
 
 
@@ -52,8 +79,28 @@ def main_menu_markup():
     markup.add(*buttons)
     return markup
 
+@bot.message_handler(commands=["revr"])
+def revr_message(message):
+    if curent_rest.id <= 0:
+        bot.send_message(message.chat.id, "Ошибка ресторан не выбран отзыв добавить нельзя")
+        return
+    rest_id = curent_rest.id
+    curent_rest.id = -1
+
+    print("add revr Команда добавить отзыв")
+    print(rest_id)
+    question = message.text
+    str1 = question[5:]
+    str2 = str1.strip()
+    print(str2)
+    bot.send_message(message.chat.id, "Спасибо Ваш Отзыв добавлен")
+
+
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
+    curent_rest.id = -1
 
     user_struct = message.from_user
     user_first_name = user_struct.first_name  # Имя пользователя
@@ -110,6 +157,7 @@ def handle_category(message):
 #*****************************************************************************
 @bot.message_handler(func=lambda message: message.text == 'Рестораны')
 def handle_restaurants(message):
+    curent_rest.id = -1
     markup = types.ReplyKeyboardMarkup(row_width=2)
     markup.add(types.KeyboardButton('Главное меню'))
     restaurants = bot_sql.sql_list_rest()
@@ -153,10 +201,24 @@ def handle_restaurant_info(message):
     info = "Невозможно предоставить информацию"
     if comma_index != -1:  # Если точка найдена
         info = message.text[comma_index+2:]
+
     if info == "Отзывы":
         bot.send_message(message.chat.id, "Выводим 5 популярных отзыва")
     elif info == "Рейтинг ресторана":
-        bot.send_message(message.chat.id, "Выводим рейтинг ресторана")
+        id_rest = _restaurants[_choose_restaurant]
+        row = bot_sql.sql_get_one_rest(id_rest)
+        if row:
+            if row[3]:
+                if row[3] > 0:
+                    mess = f"Рейтинг {row[1]} = {row[3]}"
+                else:
+                    mess = f"У ресторана {row[1]} еще нет рейтинга"
+            else:
+                mess = f"У ресторана {row[1]} еще нет рейтинга"
+        else:
+            mess = "Ресторан не найден"
+
+        bot.send_message(message.chat.id, mess)
     elif info == "Оценить ресторан":
         _rating = "restaurant"
         markup = types.InlineKeyboardMarkup(row_width=5)
@@ -166,8 +228,18 @@ def handle_restaurant_info(message):
         buttons.append(but_0)
         markup.add(*buttons)
         bot.send_message(message.chat.id, "Оцените ресторан от 1 до 5:", reply_markup=markup)
+    elif info == "Добавить отзыв":
+        id_rest = _restaurants[_choose_restaurant]
+        if id_rest <= 0:
+            bot.send_message(message.chat.id, "Непонятная ошибка с id ресторана")
+        else:
+            curent_rest.id = id_rest
+            bot.send_message(message.chat.id, "Напишите отзыв о ресторане командой /revr")
+
     elif info == "Галерея":
         bot.send_message(message.chat.id, "Выводим галерею ресторана")
+        id_rest = _restaurants[_choose_restaurant]
+        show_foto("rest", id_rest, message.chat.id)
     elif info == "Меню":
         markup = types.ReplyKeyboardMarkup(row_width=3)
         markup.add(types.KeyboardButton('Главное меню'))
@@ -193,7 +265,11 @@ def handle_rating(call):
         #print(_restaurants)
 
         #Временно поставил ресторан 1
-        bot_sql.change_rating_rest(1, sq_user_id, val0 )
+        id_rest = _restaurants[_choose_restaurant]
+        print("id_rest")
+        print(id_rest)
+
+        bot_sql.change_rating_rest(id_rest, sq_user_id, val0 )
     elif _rating == "dish":
         bot.answer_callback_query(call.id, f"Спасибо за вашу оценку блюда: {call.data}")
     _rating = ""
