@@ -20,6 +20,7 @@ CREATE TABLE review_rest (
 )
 
 CREATE  INDEX idx_review_rest_dt ON review_rest (dt)
+CREATE  INDEX idx1_review_rest_dt ON review_rest (restaurant_id,dt)
 
 """
 
@@ -47,6 +48,11 @@ CREATE TABLE IF NOT EXISTS review_rest (
 cursor.execute('''
 CREATE  INDEX IF NOT EXISTS  idx_review_rest_dt ON review_rest (dt)
 ''')
+
+cursor.execute('''
+CREATE  INDEX IF NOT EXISTS   idx1_review_rest_dt ON review_rest (restaurant_id,dt)
+''')
+
 
 # Сохраняем изменения в базе данных и закрываем соединение
 conn.commit()

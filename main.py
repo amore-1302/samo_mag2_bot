@@ -46,6 +46,7 @@ TOKEN = 'TOKEN'
 
 
 curent_rest = Curent()
+curent_user = Curent()
 
 
 
@@ -87,13 +88,21 @@ def revr_message(message):
     rest_id = curent_rest.id
     curent_rest.id = -1
 
-    print("add revr Команда добавить отзыв")
-    print(rest_id)
+    #print("add revr Команда добавить отзыв")
+    #print(rest_id)
     question = message.text
     str1 = question[5:]
     str2 = str1.strip()
-    print(str2)
-    bot.send_message(message.chat.id, "Спасибо Ваш Отзыв добавлен")
+    #print(str2)
+    user_struct = message.from_user
+    sq_user_id = bot_sql.get_id_user(user_struct)
+    bot_sql.add_review_rest(sq_user_id, rest_id, str2)
+
+    bot.send_message(message.chat.id, "Спасибо Ваш Отзыв добавлен  ")
+    #bot.send_message(message.chat.id, "/start")
+    bot.send_message(message.chat.id, "Выберите действие:", reply_markup=main_menu_markup())
+
+
 
 
 
@@ -149,7 +158,12 @@ def handle_category(message):
     markup.add(types.KeyboardButton('Сделать заказ'))
     rows = bot_sql.get_dishs_for_categorys_and_restorany(_restaurants[_choose_restaurant], _restaurant_category_menu[message.text])
     for row in rows:
-        bot.send_message(message.chat.id, f"{row[0]}.\t{row[1]}:\t\t\t\t{row[2]}")
+        #bot.send_message(message.chat.id, f"{row[0]}.\t{row[1]}:\t\t\t\t{row[2]}")
+        # добавил три строки
+        nazw_dish = f"{row[1]}  \t\tцена {row[2]}"
+        item_btn = types.KeyboardButton(nazw_dish)
+        markup.add(item_btn)
+
     bot.send_message(message.chat.id, "Выберите номер блюда или вернитесь в <Категории блюд ресторана>:", reply_markup=markup)
 
 #*****************************************************************************
@@ -203,7 +217,20 @@ def handle_restaurant_info(message):
         info = message.text[comma_index+2:]
 
     if info == "Отзывы":
-        bot.send_message(message.chat.id, "Выводим 5 популярных отзыва")
+        id_rest = _restaurants[_choose_restaurant]
+        #print("Отзывы")
+        rows = bot_sql.sql_get_all_review_rest(id_rest)
+        if not rows:
+            mess = "О Ресторане еще нет отзывов"
+            bot.send_message(message.chat.id, mess)
+            return
+        for row in rows:
+            #print(row)
+            str_mes = f"{row[3]} {row[4]}"
+            bot.send_message(message.chat.id, str_mes)
+
+
+        #bot.send_message(message.chat.id, "Выводим 5 популярных отзыва")
     elif info == "Рейтинг ресторана":
         id_rest = _restaurants[_choose_restaurant]
         row = bot_sql.sql_get_one_rest(id_rest)

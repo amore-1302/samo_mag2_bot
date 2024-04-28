@@ -20,6 +20,7 @@ CREATE TABLE review_dish (
 )
 
 CREATE  INDEX idx_review_rest_dt ON review_dish (dt)
+CREATE  INDEX idx1_review_rest_dt ON review_dish (dish_id, dt)
 
 """
 
@@ -49,6 +50,10 @@ CREATE TABLE IF NOT EXISTS review_dish (
 # Создаем уникальный индекс на поле dt
 cursor.execute('''
 CREATE  INDEX  IF NOT EXISTS   idx_review_rest_dt ON review_dish (dt)
+''')
+
+cursor.execute('''
+CREATE  INDEX  IF NOT EXISTS  idx1_review_rest_dt ON review_dish (dish_id, dt)
 ''')
 
 # Сохраняем изменения в базе данных и закрываем соединение

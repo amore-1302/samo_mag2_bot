@@ -1,7 +1,37 @@
 import sqlite3
+import datetime
 
 # По   конкртному ресторано и категории возвращаем все блюда
 # каждая строка id блюда и название блюда
+
+def sql_get_all_review_rest(id_rest):
+    param = (id_rest,)
+    query = """SELECT *
+        FROM review_rest
+        WHERE restaurant_id = ?
+        ORDER BY dt DESC
+        """
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+
+    cursor.execute(query, param)
+    rows = cursor.fetchall()  # Получаем все данные
+    conn.close()
+    return rows
+
+
+def add_review_rest(sq_user_id, rest_id, curent_review ):
+    now_dt_tine = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+    param = (sq_user_id, rest_id, now_dt_tine, curent_review,)
+    query = 'INSERT INTO review_rest(user_id, restaurant_id, dt, name)  VALUES(?, ?, ?, ?)'
+
+    conn = sqlite3.connect('./samo_mag_bot.db')
+    cursor = conn.cursor()
+    cursor.execute(query, param)
+    conn.commit()
+    conn.close()
+
+
 
 def all_rating_rest(id_rest):
     param = (id_rest,)

@@ -37,7 +37,7 @@ print(curent_rest.id)
 curent_rest.id = -1
 print(curent_rest.id)
 
-a = 100/0
+
 str_1 = """
 1 распечатать restaurants   rating_rest
 2 добавить рейтинг  добавляем в таблицу rating_rest строку  10,1,5
