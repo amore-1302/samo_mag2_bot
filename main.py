@@ -43,7 +43,7 @@ def sql_list_command(message):
 
 # основной бот
 TOKEN = 'TOKEN'
-TOKEN = '7131298943:AAGzuq6ASFaxhB-ooK8-SjQYIx4UL_0-NYo'
+
 
 curent_rest = Curent()
 curent_user = Curent()
