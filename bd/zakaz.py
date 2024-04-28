@@ -8,7 +8,7 @@ user_id id пользователя заказа
 restaurant_id  - идентификатор ресторана, к которому относится заказ.
 sum_all сумма всего заказа
 payment_type   вид оплаты нал и БН
-status   статус заказа стаусы строго определены в одной таблице
+status_id   id статус заказа стаусы строго определены в одной таблице
 
 
 payment_types доп таблица хранит виды оплаты
@@ -42,16 +42,16 @@ CREATE TABLE IF NOT EXISTS zakaz (
     restaurant_id INTEGER NOT NULL,
     sum_all REAL  DEFAULT 0.0,
     payment_type INTEGER,
-    status INTEGER NOT NULL,
+    status_id INTEGER NOT NULL,
     delivery_address TEXT ,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
     FOREIGN KEY (payment_type) REFERENCES payment_types(payment_type_id),
-    FOREIGN KEY (status) REFERENCES status_s(status_id)
+    FOREIGN KEY (status_id) REFERENCES status_s(status_id)
 )
 
 CREATE  INDEX IF NOT EXISTS   idx1_zakaz ON zakaz (user_id, dt)
-CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status)
+CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status_id)
 
 
 
@@ -66,6 +66,8 @@ import sqlite3
 
 conn = sqlite3.connect('../samo_mag_bot.db')
 cursor = conn.cursor()
+
+
 
 
 cursor.execute('''
@@ -90,12 +92,12 @@ CREATE TABLE IF NOT EXISTS zakaz (
     restaurant_id INTEGER NOT NULL,
     sum_all REAL  DEFAULT 0.0,
     payment_type INTEGER,
-    status INTEGER NOT NULL,
+    status_id INTEGER NOT NULL,
     delivery_address TEXT ,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
     FOREIGN KEY (payment_type) REFERENCES payment_types(payment_type_id),
-    FOREIGN KEY (status) REFERENCES status_s(status_id)
+    FOREIGN KEY (status_id) REFERENCES status_s(status_id)
 )
 ''')
 
@@ -103,12 +105,10 @@ cursor.execute('''
 CREATE  INDEX IF NOT EXISTS   idx1_zakaz ON zakaz (user_id, dt)
 ''')
 
+
 cursor.execute('''
-CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status)
+CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status_id)
 ''')
-
-
-
 
 # Сохраняем изменения в базе данных и закрываем соединение
 conn.commit()

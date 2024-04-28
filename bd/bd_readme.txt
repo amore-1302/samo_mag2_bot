@@ -21,3 +21,5 @@
 12.зайти в модуль  zakaz.py и выполнить его это добавление таблиц  payment_types status_s zakaz
 
 13.зайти в модуль  zakaz_ini.py и выполнить его это заполнение доп  таблиц  payment_types status_s
+14.зайти в модуль  zakaz_dt.py и выполнить его это  добавление таблицы zakaz_image
+15.зайти в модуль  zakaz_history.py и выполнить его это  добавление таблицы zakaz__history
