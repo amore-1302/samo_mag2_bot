@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS zakaz (
 )
 
 CREATE  INDEX IF NOT EXISTS   idx1_zakaz ON zakaz (user_id, dt)
-CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status_id)
+CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, restaurant_id , status_id)
 
 
 
@@ -107,8 +107,10 @@ CREATE  INDEX IF NOT EXISTS   idx1_zakaz ON zakaz (user_id, dt)
 
 
 cursor.execute('''
-CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status_id)
+CREATE  INDEX  IF NOT EXISTS    idx2_zakaz ON zakaz (user_id, restaurant_id , status_id)
 ''')
+
+
 
 # Сохраняем изменения в базе данных и закрываем соединение
 conn.commit()
