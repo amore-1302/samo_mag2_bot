@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS zakaz (
     sum_all REAL  DEFAULT 0.0,
     payment_type INTEGER,
     status INTEGER NOT NULL,
+    delivery_address TEXT ,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
     FOREIGN KEY (payment_type) REFERENCES payment_types(payment_type_id),
@@ -65,6 +66,7 @@ import sqlite3
 
 conn = sqlite3.connect('../samo_mag_bot.db')
 cursor = conn.cursor()
+
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS payment_types (
@@ -89,6 +91,7 @@ CREATE TABLE IF NOT EXISTS zakaz (
     sum_all REAL  DEFAULT 0.0,
     payment_type INTEGER,
     status INTEGER NOT NULL,
+    delivery_address TEXT ,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
     FOREIGN KEY (payment_type) REFERENCES payment_types(payment_type_id),
@@ -101,7 +104,10 @@ CREATE  INDEX IF NOT EXISTS   idx1_zakaz ON zakaz (user_id, dt)
 ''')
 
 cursor.execute('''
+CREATE  INDEX IF NOT EXISTS   idx2_zakaz ON zakaz (user_id, status)
 ''')
+
+
 
 
 # Сохраняем изменения в базе данных и закрываем соединение
